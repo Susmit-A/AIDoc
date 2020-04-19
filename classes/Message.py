@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class Message(DBWrapper):
-    def __init__(self, user, content, time=None):
+    def __init__(self, username, user, content, time=None):
         super().__init__()
         if time is None:
             self.time = str(datetime.now())
@@ -11,23 +11,22 @@ class Message(DBWrapper):
             self.time = time
         self.content = content
         self.user = user
+        self.username = username
 
     def upload(self):
         self.cursor.execute('''
-            INSERT INTO MESSAGE(speaker, content, time) VALUES (%s,%s,%s);
-
-        ''', (self.user, self.content, self.time))
+            INSERT INTO MESSAGE(username, speaker, content, time) VALUES (%s, %s,%s,%s);
+        ''', (self.username, self.user, self.content, self.time))
 
     @staticmethod
-    def fetch():
+    def fetch(username):
         DBWrapper.cursor.execute('''
-                SELECT * FROM MESSAGE;
-            ''')
-
+                SELECT * FROM MESSAGE where username=(%s);
+            ''', (username,))
         messages = []
         records = DBWrapper.cursor.fetchall()
         if len(records) == 0:
-            msg = Message('bot', "How may I help you?")
+            msg = Message(username, 'bot', "How may I help you?")
             msg.upload()
             messages.append(msg)
         for rec in records:
@@ -38,6 +37,7 @@ class Message(DBWrapper):
     def create_table():
         DBWrapper.exec_query('''
            create table MESSAGE(
+                username varchar(15),
                 speaker varchar(4),
                 content text,
                 time varchar(30)

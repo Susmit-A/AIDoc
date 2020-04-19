@@ -26,7 +26,7 @@ login_manager = LoginManager(app)
 socketio = SocketIO(app)
 
 doc = None
-messages = Message.fetch()
+messages = None
 
 
 @login_manager.user_loader
@@ -37,6 +37,7 @@ def load_user(user_id):
 @app.route("/login", methods=['GET', 'POST'])
 @app.route("/", methods=['GET', 'POST'])
 def login():
+    global messages
     form = LoginForm()
     if form.validate_on_submit():
         user = User.fetch(form.email.data)
@@ -45,6 +46,7 @@ def login():
             validate = bcrypt.check_password_hash(user.password, form.password.data)
             if validate:
                 login_user(user)
+                messages = Message.fetch(current_user.username)
                 return redirect(url_for('profile'))
             else:
                 flash(f'Password incorrect. Login unsuccessful', 'danger')
@@ -91,7 +93,7 @@ def profile():
 @app.route('/message_user', methods=['GET', 'POST'])
 def message_user():
     content = request.get_json()
-    msg = Message('user', content['content'])
+    msg = Message(current_user.username, 'user', content['content'])
     msg.upload()
     socketio.emit('message_user', json.dumps({
         'user': 'user',
@@ -99,7 +101,7 @@ def message_user():
         'time': msg.time,
     }))
     ans = doc.predict(msg.content, search_by='answer', topk=1, answer_only=True)[0]
-    ans_msg = Message('bot', ans)
+    ans_msg = Message(current_user.username, 'bot', ans)
     socketio.emit('message_bot', json.dumps({
         'user': 'bot',
         'content': ans_msg.content,
@@ -112,7 +114,7 @@ def message_user():
 @app.route('/message_model', methods=['GET', 'POST'])
 def message_model():
     ans = "Test"
-    msg = Message('bot', ans)
+    msg = Message(current_user.username, 'bot', ans)
     msg.upload()
     socketio.emit('message', json.dumps({
         'user': 'bot',
@@ -120,7 +122,6 @@ def message_model():
         'time': msg.time,
     }))
     return '', 200
-
 
 
 @app.route("/logout")

@@ -17,7 +17,7 @@ from classes.forms import RegistrationForm, LoginForm, PostForm
 from flask_bcrypt import Bcrypt
 from docproduct.predictor import RetreiveQADoc, GenerateQADoc
 
-from classes.message import Message
+from classes.Message import Message
 
 app = Flask("__app__")
 app.config['SECRET_KEY'] = 'a551d32359baf371b9095f28d45347c8b8621830'
@@ -26,9 +26,7 @@ login_manager = LoginManager(app)
 socketio = SocketIO(app)
 
 doc = None
-messages = [
-    Message('bot', "How may I help you?")
-]
+messages = Message.fetch()
 
 
 @login_manager.user_loader
@@ -94,7 +92,7 @@ def profile():
 def message_user():
     content = request.get_json()
     msg = Message('user', content['content'])
-    # msg.upload()
+    msg.upload()
     socketio.emit('message_user', json.dumps({
         'user': 'user',
         'content': msg.content,
@@ -107,6 +105,7 @@ def message_user():
         'content': ans_msg.content,
         'time': ans_msg.time,
     }))
+    ans_msg.upload()
     return '', 200
 
 
@@ -114,7 +113,7 @@ def message_user():
 def message_model():
     ans = "Test"
     msg = Message('bot', ans)
-    # msg.upload()
+    msg.upload()
     socketio.emit('message', json.dumps({
         'user': 'bot',
         'content': ans,

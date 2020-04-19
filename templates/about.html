@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+	<style type="text/css">
+      .overlay-desc {
+        background: rgba(0,0,0,0);
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        
+      }
+
+      .video-container {
+        position: relative;
+      }
+
+      .quote {
+        word-wrap: break-word; 
+        color: white;
+        font-size: 2.15em;
+        text-align: center;
+        content: wrap;
+      }
+
+    </style>
+<div class="container">
+  <div>
+    <h1 class="text-center">What's up, doc?</h1><br><br>
+  </div>
+  <br>
+  <div class="row app-marketing-grid">
+        <div class="col-md-4 px-4 mb-5 text-center">
+          <img class="mb-1" src="{{ url_for('static', filename='res/identity.png') }}">
+          <p><strong class="text-dark larger">What is it?</strong><p class="text-dark">We use the power of AI, specifically the BERT architecture, to provide users with a primary medical diagnosis from any symptoms they may be experiencing. It provides a basic cure that patients can use to reduce discomfort. The conversations are almost human-like, and can be implemented for multiple languages.</p></p>
+        </div>
+        <div class="col-md-4 px-4 mb-5 text-center">
+          <img class="mb-1" src="{{ url_for('static', filename='res/privacy.png') }}">
+              <p><strong class="text-dark larger">Why is this required?</strong><p class="text-dark"> In developing countries, especially India, it can be seen that the number of doctors in rural areas are very small. Additionally, residents do not have much medical knowledge, and rely either on a doctor's direct advice or on remedies passed down, to interpret any medical symptoms they experience. This leads to overcrowded clinics, or wrongly diagnosed diseases.
+              
+              Modern advancements in AI in the fields of Natural Language Processing, Natural Language Understanding, Knowledge representation and knowledge extraction can be used for providing a simple, preliminary and accurate diagnosis of a patient's symptoms. Simple remedies can be suggested for minor ailments. Such remedies are extracted form a large corpus of medical data, what is used to train the model.
+              
+              We use the BERT architecture, which has proven exceptionally good at aforementioned tasks. Additionally, it can be used with multiple languages, if medical datasets are available in those languages.
+              </p></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock content %}
